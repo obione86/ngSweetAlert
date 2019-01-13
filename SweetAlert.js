@@ -100,13 +100,9 @@
             title: '',
             text: '',
             icon: '',
-            button: null,
-            buttons: null,
-            content: null,
             className: '',
             closeOnClickOutside: true,
             closeOnEsc: true,
-            dangerMode: false,
-            timer: null
+            dangerMode: false
         });
 }));
