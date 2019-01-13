@@ -20,47 +20,23 @@
 }(this, function (angular, swal) {
     "use strict";
 
-    angular.module('oitozero.ngSweetAlert', [])
-        .factory('SweetAlert', ['$rootScope', 'SweetAlertConfig', function ($rootScope, SweetAlertConfig) {
+    angular.module('ngSweetAlert', [])
+        .factory('SweetAlert', ['$rootScope', '$q', 'SweetAlertConfig', function ($rootScope, $q, SweetAlertConfig) {
             //public methods
             var self = {
 
-                swal: function (arg1, arg2, arg3) {
-
-                    //merge with default config
-                    var arg1 = angular.extend(SweetAlertConfig, arg1);
-
-                    $rootScope.$evalAsync(function () {
-                        if (typeof(arg2) === 'function') {
-                            swal(arg1, function (isConfirm) {
-                                $rootScope.$evalAsync(function () {
-                                    arg2(isConfirm);
-                                });
-                            }, arg3);
-                        } else {
-                            swal(arg1, arg2, arg3);
-                        }
-                    });
-                },
+                swal: ngSwal,
                 success: function (title, message) {
-                    $rootScope.$evalAsync(function () {
-                        swal(title, message, 'success');
-                    });
+                    return ngSwal(title, message, 'success');
                 },
                 error: function (title, message) {
-                    $rootScope.$evalAsync(function () {
-                        swal(title, message, 'error');
-                    });
+                    return ngSwal(title, message, 'error');
                 },
                 warning: function (title, message) {
-                    $rootScope.$evalAsync(function () {
-                        swal(title, message, 'warning');
-                    });
+                    return ngSwal(title, message, 'warning');
                 },
                 info: function (title, message) {
-                    $rootScope.$evalAsync(function () {
-                        swal(title, message, 'info');
-                    });
+                    return ngSwal(title, message, 'info');
                 },
                 showInputError: function (message) {
                     $rootScope.$evalAsync(function () {
@@ -71,32 +47,66 @@
                     $rootScope.$evalAsync(function () {
                         swal.close();
                     });
+                },
+                getState: function () {
+                    return swal.getState();
+                },
+                stopLoading: function () {
+                    $rootScope.$evalAsync(function () {
+                        swal.stopLoading();
+                    });
+                },
+                setActionValue: function (val) {
+                    $rootScope.$evalAsync(function () {
+                        swal.setActionValue(val);
+                    });
                 }
             };
 
             return self;
-        }]).constant('SweetAlertConfig', {
-        title: '',
-        text: '',
-        type: null,
-        allowOutsideClick: false,
-        showConfirmButton: true,
-        showCancelButton: false,
-        closeOnConfirm: true,
-        closeOnCancel: true,
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#8CD4F5',
-        cancelButtonText: 'Cancel',
-        imageUrl: null,
-        imageSize: null,
-        timer: null,
-        customClass: '',
-        html: false,
-        animation: true,
-        allowEscapeKey: true,
-        inputType: 'text',
-        inputPlaceholder: '',
-        inputValue: '',
-        showLoaderOnConfirm: false
-    });
+
+            function ngSwal(arg1, arg2, arg3, arg4) {
+                var def = $q.defer();
+                //merge with default config
+                if (typeof (arg1) === 'object') {
+                    var arg1 = angular.extend(SweetAlertConfig, arg1);
+                }
+                debugger;
+                var swalPromise;
+                switch (arguments.length) {
+                    case 1:
+                        swalPromise = swal(arg1);
+                        break;
+                    case 2:
+                        swalPromise = swal(arg1, arg2);
+                        break;
+                    case 3:
+                        swalPromise = swal(arg1, arg2, arg3);
+                        break;
+                    case 4:
+                    default:
+                        swalPromise = swal(arg1, arg2, arg3, arg4);
+                        break;
+                }
+                swalPromise
+                    .then(function (result) {
+                        def.resolve(result);
+                    });
+
+                return def.promise;
+            }
+        }])
+        .constant('SweetAlertConfig', {
+            title: '',
+            text: '',
+            icon: '',
+            button: null,
+            buttons: null,
+            content: null,
+            className: '',
+            closeOnClickOutside: true,
+            closeOnEsc: true,
+            dangerMode: false,
+            timer: null
+        });
 }));
