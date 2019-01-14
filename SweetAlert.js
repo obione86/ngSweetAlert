@@ -71,7 +71,7 @@
                 if (typeof (arg1) === 'object') {
                     var arg1 = angular.extend(SweetAlertConfig, arg1);
                 }
-                debugger;
+                
                 var swalPromise;
                 switch (arguments.length) {
                     case 1:
