@@ -14,7 +14,7 @@
     } else if (typeof module === 'object' && module.exports) {
         module.exports = factory(require('angular'), require('sweetalert')); // Node
     } else {
-        factory(root.angular, root.swal);					// Browser
+        factory(root.angular, root.swal); // Browser
     }
 
 }(this, function (angular, swal) {
@@ -69,9 +69,9 @@
                 var def = $q.defer();
                 //merge with default config
                 if (typeof (arg1) === 'object') {
-                    var arg1 = angular.extend(SweetAlertConfig, arg1);
+                    var arg1 = angular.extend({}, SweetAlertConfig, arg1);
                 }
-                
+
                 var swalPromise;
                 switch (arguments.length) {
                     case 1:
